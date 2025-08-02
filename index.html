@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sortify</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/icon.png" type="image/x-icon">
+  
+  <link rel="stylesheet" href="css/main.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <aside id="left-sidebar" class="sidebar">
+    <h2>Controles</h2>
+    <div class="control-group">
+      <label>Modo de Comparação</label>
+      <div id="mode-switcher-container"></div>
+    </div>
+    <div class="control-group">
+      <label>Modo de Execução</label>
+      <div id="execution-mode-switcher" class="mode-switcher">
+        <button id="exec-mode-auto" class="mode-button active">Automático</button>
+        <button id="exec-mode-step" class="mode-button">Passo a Passo</button>
+      </div>
+    </div>
+    <div class="control-group">
+      <button id="play-btn" class="control-button">Iniciar</button>
+      <button id="pause-btn" class="control-button" style="display: none;">Pausar</button>
+      <button id="next-step-btn" class="control-button" style="display: none;">Próximo Passo</button>
+      <button id="reset-btn" class="control-button">Resetar</button>
+    </div>
+    
+    <div id="algorithms-selection-area">
+        <div id="race-mode-panel">
+          <label>Selecione os competidores:</label>
+          
+          <div id="race-algo-toggles" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+        </div>
+        <div id="benchmark-mode-panel" style="display: none;">
+        </div>
+    </div>
+
+    <div id="qs-variant-group" class="control-group">
+      <label for="qs-variant-select">Variante do Quick Sort (Pivô)</label>
+      <select id="qs-variant-select">
+        <option value="last">Último Elemento</option>
+        <option value="first">Primeiro Elemento</option>
+        <option value="middle">Elemento Central</option>
+        <option value="median">Mediana de Três</option>
+        <option value="random">Aleatório</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label for="size-slider">Tamanho dos Dados (<span id="size-label">50</span>)</label>
+      <input type="range" id="size-slider" min="5" max="300" value="50">
+    </div>
+    <div class="control-group">
+      <label for="delay-mode-select">Modo de Velocidade</label>
+      <select id="delay-mode-select">
+        <option value="simple">Simples (Geral)</option>
+        <option value="advanced">Avançado (Por Etapa)</option>
+      </select>
+    </div>
+    <div id="simple-delay-panel" class="control-group">
+      <label for="speed-slider">Velocidade (<span id="speed-label">70</span>)</label>
+      <input type="range" id="speed-slider" min="1" max="100" value="70">
+    </div>
+    <div id="advanced-delay-panel" class="control-group" style="display: none;">
+      <div class="control-group">
+        <label>Delay de Comparação (ms) (<span id="compare-delay-label">50</span>)</label>
+        <input type="range" id="compare-delay-slider" min="0" max="500" value="50">
+      </div>
+      <div class="control-group">
+        <label>Delay de Movimentação (ms) (<span id="swap-delay-label">100</span>)</label>
+        <input type="range" id="swap-delay-slider" min="0" max="500" value="100">
+      </div>
+    </div>
+    <div class="control-group">
+      <label for="scenario-select">Cenário dos Dados</label>
+      <select id="scenario-select">
+        <option value="random">Aleatório</option>
+        <option value="nearlySorted">Quase Ordenado</option>
+        <option value="reversed">Ordem Inversa</option>
+        <option value="fewUnique">Poucos Itens Únicos</option>
+      </select>
+    </div>
+  </aside>
+
+  <main id="main-content"><div id="visualizers-area"></div></main>
+  
+  <aside id="right-sidebar" class="sidebar initial-hidden">
+    <h2 id="scoreboard-title"></h2>
+    <ol id="scoreboard-list"></ol>
+  </aside>
+
+  <div id="benchmark-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button id="benchmark-modal-close" class="modal-close-btn">&times;</button>
+      <h2 id="benchmark-summary-title">Relatório do Benchmark</h2>
+      <div id="benchmark-summary-stats"></div>
+      <div class="charts-container">
+        <div><h3>Tempo Médio (s)</h3><canvas id="timeChart"></canvas></div>
+        <div><h3>Comparações Médias</h3><canvas id="comparisonsChart"></canvas></div>
+        <div><h3>Acessos Médios ao Array</h3><canvas id="accessesChart"></canvas></div>
+      </div>
+      <div id="benchmark-results-container"></div>
+    </div>
+  </div>
+
+  <button id="hide-ui-btn" class="floating-btn">Hide UI</button>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+/* css/layout.css */
+body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  padding: var(--app-padding);
+  gap: var(--app-padding);
+}
+
+body.ui-hidden {
+  grid-template-columns: 1fr auto !important;
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 30px;
+  height: 100%;
+  overflow-y: auto;
+  transition: width 0.4s ease-in-out, background-color 0.3s;
+  z-index: 100;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+#main-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--surface-color);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+#right-sidebar.initial-hidden {
+  display: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 1001;
+  padding: 12px 18px;
+  background: var(--primary-dark);
+  color: var(--text-headline);
+  border: none;
+  border-radius: 50px;
+  font-family: 'Sora', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+.floating-btn:hover {
+  background: var(--primary-light);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}

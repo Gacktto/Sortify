@@ -1,0 +1,28 @@
+/* css/base.css */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: 'Sora', sans-serif;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #4f4f52;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #67676a;
+}

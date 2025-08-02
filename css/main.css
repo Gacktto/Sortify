@@ -1,0 +1,22 @@
+/* css/main.css */
+
+/* 1. Variáveis e Temas */
+@import url('theme.css');
+
+/* 2. Estilos de Base e Resets */
+@import url('base.css');
+
+/* 3. Estrutura Principal da Página */
+@import url('layout.css');
+
+/* 4. Controles da Sidebar */
+@import url('sidebar-controls.css');
+
+/* 5. Componente de Visualização */
+@import url('visualizer.css');
+
+/* 6. Outros Componentes (Placar, Modal, etc.) */
+@import url('components.css');
+
+/* 7. Telas de Pré-visualização */
+@import url('pre-start.css');

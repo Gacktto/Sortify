@@ -1,0 +1,41 @@
+/* css/theme.css */
+:root {
+  --bg-color: #16161a;
+  --surface-color: #242629;
+  --surface-glass: rgba(36, 38, 41, 0.6);
+  --text-headline: #fffffe;
+  --text-main: #94a1b2;
+  --text-muted: #72757e;
+
+  --primary-main: #8B5CF6;
+  --primary-light: #A78BFA;
+  --primary-dark: #7C3AED;
+  --primary-focus-ring: rgba(139, 92, 246, 0.4);
+
+  --winner-color: #ffd700;
+  --loser-color: #ef4565;
+  --comparison-color: #00ff00;
+  --movement-color: #ffca28;
+  --pivot-color: #9700bd;
+
+  --sidebar-width: 330px;
+  --app-padding: 20px;
+}
+
+:root.light-mode {
+  --bg-color: #f0f2f5;
+  --surface-color: #ffffff;
+  --surface-glass: rgba(255, 255, 255, 0.7);
+  --text-headline: #0d0d0d;
+  --text-main: #2a2a2a;
+  --text-muted: #5f5f5f;
+
+  --primary-main: #7C3AED;
+  --primary-light: #8B5CF6;
+  --primary-dark: #6D28D9;
+  --primary-focus-ring: rgba(124, 58, 237, 0.4);
+
+  --comparison-color: #00c853;
+  --movement-color: #ffab00;
+  --pivot-color: #aa00ff;
+}
