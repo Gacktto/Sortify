@@ -460,12 +460,30 @@ function initializeApp() {
         if (e.target.matches('#mode-benchmark-btn')) switchMode('benchmark');
     });
     uiElements.executionModeSwitcher.addEventListener('click', (e) => {
-        if (e.target.tagName === 'BUTTON') {
-            state.executionState = e.target.id === 'exec-mode-auto' ? 'auto' : 'step';
-            uiElements.executionModeSwitcher.querySelector('#exec-mode-auto').classList.toggle('active', state.executionState === 'auto');
-            uiElements.executionModeSwitcher.querySelector('#exec-mode-step').classList.toggle('active', state.executionState === 'step');
-            updateControlsState();
+        // Ignora cliques que não sejam nos botões
+        if (e.target.tagName !== 'BUTTON') return;
+
+        const newMode = e.target.id === 'exec-mode-auto' ? 'auto' : 'step';
+        
+        // Se já estamos no modo clicado, não faz nada
+        if (newMode === state.executionState) return;
+
+        const oldMode = state.executionState;
+        state.executionState = newMode;
+
+        // Atualiza o estilo dos botões para refletir o modo ativo
+        uiElements.executionModeSwitcher.querySelector('#exec-mode-auto').classList.toggle('active', state.executionState === 'auto');
+        uiElements.executionModeSwitcher.querySelector('#exec-mode-step').classList.toggle('active', state.executionState === 'step');
+
+        // **A LÓGICA PRINCIPAL:** Se estávamos no modo passo a passo e mudamos para automático
+        // durante uma ordenação, precisamos "despausar" todos os algoritmos que estavam esperando.
+        if (oldMode === 'step' && newMode === 'auto' && state.isSorting) {
+            state.stepPromiseResolvers.forEach(resolve => resolve(true));
+            state.stepPromiseResolvers = [];
         }
+
+        // Atualiza os botões de controle (Play, Pausar, Próximo Passo) para refletir o novo estado
+        updateControlsState();
     });
     uiElements.nextStepBtn.addEventListener('click', () => {
         state.stepPromiseResolvers.forEach(resolve => resolve(true));
