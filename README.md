@@ -1,13 +1,22 @@
-# Sortify
+<h1 align="center">Sortify</h1>
 
-Sortify is an interactive web application designed for students, educators, and developers to visualize, compare, and analyze the performance of various sorting algorithms. It serves as an advanced "studio" that goes beyond simple visualization, offering multiple analysis modes and detailed execution controls.
+<p align="center">
+  <img src="https://img.shields.io/github/license/Gacktto/Sortify" alt="license">
+  <img src="https://img.shields.io/github/last-commit/Gacktto/Sortify" alt="last commit">
+  <img src="https://img.shields.io/github/languages/top/Gacktto/Sortify" alt="languages">
+  <img src="https://img.shields.io/badge/status-developing-yellow" alt="status">
+</p>
+
+<p align="center">Sortify is an interactive web application designed for students, educators, and developers to visualize, compare, and analyze the performance of various sorting algorithms. It serves as an advanced "studio" that goes beyond simple visualization, offering multiple analysis modes and detailed execution controls.</p>
+
+## Live 
+[Sortify Live](https://gacktto.github.io/Sortify/)
+
+![Sortify Header](/assets/banner.png)
 
 ## About The Project
 
 The goal of Sortify is to provide a robust and intuitive platform to demystify the inner workings and performance nuances of sorting algorithms. By enabling real-time, side-by-side comparisons and systematic benchmarks, the application facilitates a practical understanding of theoretical concepts such as time complexity, stability, and the impact of different input data scenarios.
-
-## Live 
-[Sortify Live](https://gacktto.github.io/Sortify/)
 
 ## Key Features
 
