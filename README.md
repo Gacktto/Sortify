@@ -6,6 +6,9 @@ Sortify is an interactive web application designed for students, educators, and 
 
 The goal of Sortify is to provide a robust and intuitive platform to demystify the inner workings and performance nuances of sorting algorithms. By enabling real-time, side-by-side comparisons and systematic benchmarks, the application facilitates a practical understanding of theoretical concepts such as time complexity, stability, and the impact of different input data scenarios.
 
+## Live 
+[Sortify Live](https://gacktto.github.io/Sortify/)
+
 ## Key Features
 
 * **Three Analysis Modes:**
