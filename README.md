@@ -56,7 +56,7 @@ As the project is self-contained, running it locally is very straightforward.
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
+    git clone https://github.com/Gacktto/Sortify.gitt
     ```
 
 2.  **Open the `index.html` file:**
