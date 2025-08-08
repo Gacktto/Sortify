@@ -6,44 +6,40 @@ import {
 import state from './state.js';
 
 async function wait(type = 'general') {
-	if (state.stopSignal) return false;
+    if (state.stopSignal) return false;
 
-	let currentDelay = 0;
-	if (state.delay.mode === 'simple') {
-		currentDelay = state.delay.simple;
-	} else {
-		switch (type) {
-			case 'compare':
-				currentDelay = state.delay.compare;
-				break;
-			case 'swap':
-				currentDelay = state.delay.swap;
-				break;
-			default:
-				currentDelay = 20;
-		}
-	}
+    let currentDelay = 0;
+    if (state.delay.mode === 'simple') {
+        currentDelay = state.delay.simple;
+    } else {
+        switch (type) {
+            case 'compare':
+                currentDelay = state.delay.compare;
+                break;
+            case 'swap':
+                currentDelay = state.delay.swap;
+                break;
+            default:
+                currentDelay = 20;
+        }
+    }
 
-	switch (state.executionState) {
-		case 'auto':
-			if (currentDelay > 0) {
-				await new Promise(resolve => setTimeout(resolve, currentDelay));
-			}
-			return !state.stopSignal;
-		case 'paused':
-			return new Promise(resolve => {
-				const check = () => {
-					if (state.stopSignal) resolve(false);
-					else if (state.executionState !== 'paused') resolve(!state.stopSignal);
-					else setTimeout(check, 100);
-				};
-				check();
-			});
-		case 'step':
-			return new Promise(resolve => {
-				state.stepPromiseResolvers.push(resolve);
-			});
-	}
+    while (state.executionState === 'paused' && !state.stopSignal) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    if (state.stopSignal) return false;
+
+    if (state.executionState === 'auto') {
+        if (currentDelay > 0) {
+            await new Promise(resolve => setTimeout(resolve, currentDelay));
+        }
+    } else if (state.executionState === 'step') {
+        await new Promise(resolve => {
+            state.stepPromiseResolvers.push(resolve);
+        });
+    }
+
+    return !state.stopSignal;
 }
 
 function drawHeapTree(viz, size, highlights = {}) {
@@ -430,6 +426,8 @@ export const ALGORITHMS = {
 			for (let i = 0; i < n1; i++) L[i] = viz.array[l + i];
 			for (let j = 0; j < n2; j++) R[j] = viz.array[m + 1 + j];
 
+            viz.updateMemoryUsage(n1 + n2);
+
 			if (isSingleView) {
 				const htmlL = renderSubArrayHTML(L, 'L', 'L');
 				const htmlR = renderSubArrayHTML(R, 'R', 'R');
@@ -498,6 +496,7 @@ export const ALGORITHMS = {
 				j++;
 				k++;
 			}
+            viz.updateMemoryUsage(0);
 		};
 
 		const sort = async (l, r) => {

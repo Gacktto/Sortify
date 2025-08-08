@@ -12,6 +12,7 @@ export class Visualizer {
         this.completionTime = null;
         this.comparisons = 0;
         this.accesses = 0;
+        this.auxiliaryMemory = 0;
 
         const card = document.createElement('div');
         card.className = 'visualizer-card';
@@ -49,6 +50,12 @@ export class Visualizer {
                 <span>Comparações: <span class="stats-comparisons">0</span></span>
                 <span>Acessos: <span class="stats-accesses">0</span></span>
             </div>
+            <div class="memory-usage-container">
+                <div class="memory-usage-label">Memória Auxiliar: <span>0</span></div>
+                <div class="memory-usage-bar-wrapper">
+                    <div class="memory-usage-bar"></div>
+                </div>
+            </div>
             <div class="progress-container"><div class="progress-bar" style="background-color: ${this.config.color};"></div></div>
             <div class="status-box">Pronto</div>`;
         
@@ -61,11 +68,25 @@ export class Visualizer {
         this.statusBox = card.querySelector('.status-box');
         this.comparisonsEl = card.querySelector('.stats-comparisons');
         this.accessesEl = card.querySelector('.stats-accesses');
+        this.memoryUsageBar = card.querySelector('.memory-usage-bar');
+        this.memoryUsageContainer = card.querySelector('.memory-usage-container');
+
+        if (this.config.properties.inPlace) {
+            this.memoryUsageContainer.style.display = 'none';
+        }
 
         if (this.sortType !== 'heap' && this.sortType !== 'merge') {
             this.auxContainer.remove();
         }
 
+    }
+
+    updateMemoryUsage(auxiliarySize) {
+        this.auxiliaryMemory = auxiliarySize;
+        const totalMemory = this.array.length + this.auxiliaryMemory;
+        const percentage = totalMemory > 0 ? (this.auxiliaryMemory / totalMemory) * 100 : 0;
+        this.memoryUsageBar.style.width = `${percentage}%`;
+        this.memoryUsageContainer.querySelector('.memory-usage-label span').textContent = `${this.auxiliaryMemory}`;
     }
 
     setData(data) {
@@ -75,6 +96,7 @@ export class Visualizer {
         this.completionTime = null;
         this.comparisons = 0;
         this.accesses = 0;
+        this.auxiliaryMemory = 0;
         
         this.maxHeight = Math.max(...data, 1);
 
@@ -91,6 +113,7 @@ export class Visualizer {
         this.bars = Array.from(this.barsContainer.children);
         this.updateStatus('Pronto');
         this.updateProgress(0, 1);
+        this.updateMemoryUsage(0);
         this.cardElement.classList.remove('winner-card', 'loser-card');
     }
 

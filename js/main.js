@@ -311,7 +311,15 @@ async function runBenchmarkMode() {
 
 async function playAll() {
     if (state.isSorting) {
-        state.executionState = state.executionState === 'paused' ? 'auto' : 'paused';
+        if (state.executionState === 'paused') {
+            state.executionState = 'auto';
+            if (state.stepPromiseResolvers.length > 0) {
+                 state.stepPromiseResolvers.forEach(resolve => resolve(true));
+                 state.stepPromiseResolvers = [];
+            }
+        } else if (state.executionState === 'auto') {
+            state.executionState = 'paused';
+        }
         updateControlsState();
         return;
     }
@@ -340,7 +348,11 @@ async function playAll() {
     }
 
     const readyToStart = setupFunction();
-    if (!readyToStart) return;
+    if (!readyToStart) {
+        state.isSorting = false;
+        updateControlsState();
+        return;
+    }
 
     showCountdown(async () => {
         await startRecording();
