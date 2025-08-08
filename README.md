@@ -81,11 +81,11 @@ As the project is self-contained, running it locally is very straightforward.
 
 While the current version is fully functional, here are some potential features and improvements for the future:
 
-* **Additional Algorithms:** Incorporate more sorting algorithms like Shell Sort, Tim Sort, or Bucket Sort.
-* **Live Code Highlighting:** Display a pseudo-code or actual code snippet for the running algorithm, highlighting the line of code that corresponds to the current operation (e.g., a comparison or swap).
-* [x]**Memory Usage Visualization:** Add a visual indicator to show the auxiliary memory being used by non-in-place algorithms like Merge Sort.
-* **Save/Load Presets:** Allow users to save their favorite configurations (algorithm selections, data size, scenario) and load them later.
-* **Export Results:** Add functionality to export the data from benchmark reports as a CSV or JSON file for further analysis.
+* [ ] **Additional Algorithms:** Incorporate more sorting algorithms like Shell Sort, Tim Sort, or Bucket Sort.
+* [ ] **Live Code Highlighting:** Display a pseudo-code or actual code snippet for the running algorithm, highlighting the line of code that corresponds to the current operation (e.g., a comparison or swap).
+* [x] **Memory Usage Visualization:** Add a visual indicator to show the auxiliary memory being used by non-in-place algorithms like Merge Sort.
+* [ ] **Save/Load Presets:** Allow users to save their favorite configurations (algorithm selections, data size, scenario) and load them later.
+* [ ] **Export Results:** Add functionality to export the data from benchmark reports as a CSV or JSON file for further analysis.
 
 ## License
 
