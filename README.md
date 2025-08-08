@@ -75,25 +75,7 @@ As the project is self-contained, running it locally is very straightforward.
     Navigate to the project folder and open the `index.html` file in your preferred web browser.
 
     *Note: For the best experience, especially due to the use of ES6 Modules (`import`/`export`), it is recommended to use a local server. An extension like **Live Server** for Visual Studio Code handles this easily.*
-
-
-## File Structure
-
-The codebase is organized modularly to facilitate maintenance and scalability.
-
-```
-├── assets/              # Contains icons and other media
-├── css/                 # Modularized stylesheets
-│   └── main.css         # Main CSS entry point
-├── js/                  # Modular JavaScript files
-│   ├── algorithms.js    # Logic for each sorting algorithm
-│   ├── config.js        # Algorithm configurations and metadata
-│   ├── main.js          # Main entry point, event orchestration
-│   ├── state.js         # Global application state management
-│   ├── ui.js            # DOM manipulation and UI components
-│   └── visualizer.js    # Class for each visualizer instance
-└── index.html           # Main page structure
-```
+    
 
 ## Future Implementations
 
