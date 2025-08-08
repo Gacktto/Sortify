@@ -16,6 +16,8 @@ const state = {
     executionState: 'auto',
     pivotStrategy: 'last',
     stepPromiseResolvers: [],
+    showReportAtEnd: true,
+    recordExecution: false,
     charts: {
         timeChart: null,
         comparisonsChart: null,

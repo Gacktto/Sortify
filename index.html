@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/main.css">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -90,6 +91,17 @@
         <option value="fewUnique">Poucos Itens Únicos</option>
       </select>
     </div>
+    <div class="control-group">
+      <label>Opções</label>
+      <div class="control-option">
+        <input type="checkbox" id="show-report-toggle" class="option-checkbox" checked>
+        <label for="show-report-toggle">Exibir Relatório ao Final</label>
+      </div>
+      <div class="control-option">
+        <input type="checkbox" id="record-sort-toggle" class="option-checkbox">
+        <label for="record-sort-toggle">Gravar Execução (Vídeo | Beta)</label>
+      </div>
+    </div>
   </aside>
 
   <main id="main-content"><div id="visualizers-area"></div></main>
@@ -115,6 +127,35 @@
 
   <button id="hide-ui-btn" class="floating-btn">Hide UI</button>
 
+  <div id="floating-controls-container" class="hidden">
+    <div class="floating-panel">
+      <div class="floating-controls-grid">
+        <div class="floating-buttons">
+          <button id="floating-play-btn" class="floating-button" title="Iniciar/Retomar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z"></path></svg>
+          </button>
+          <button id="floating-pause-btn" class="floating-button" title="Pausar">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"></path></svg>
+          </button>
+          <button id="floating-next-step-btn" class="floating-button" title="Próximo Passo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path d="M5 5.5v13l6-6.5zm8 0v13l6-6.5z"></path></svg>
+          </button>
+          <button id="floating-reset-btn" class="floating-button" title="Resetar">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6"></path><path d="M22 11.5A10 10 0 0 0 3.5 12.5"></path><path d="M2 12.5a10 10 0 0 0 18.5-1"></path></svg>
+          </button>
+        </div>
+        <div class="floating-control-group">
+          <label for="floating-size-slider">Tamanho (<span id="floating-size-label">50</span>)</label>
+          <input type="range" id="floating-size-slider" min="5" max="300" value="50">
+        </div>
+        <div class="floating-control-group">
+          <label for="floating-speed-slider">Velocidade (<span id="floating-speed-label">70</span>)</label>
+          <input type="range" id="floating-speed-slider" min="1" max="100" value="70">
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script type="module" src="js/main.js"></script>
   <div id="mobile-unsupported-overlay">
     <div class="message-box">
@@ -135,6 +176,5 @@
       </p>
     </div>
   </div>
-  </body>
 </body>
 </html>

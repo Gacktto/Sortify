@@ -28,6 +28,15 @@ export const uiElements = {
     benchmarkResultsContainer: document.getElementById('benchmark-results-container'),
     benchmarkSummaryTitle: document.getElementById('benchmark-summary-title'),
     benchmarkSummaryStats: document.getElementById('benchmark-summary-stats'),
+    floatingControlsContainer: document.getElementById('floating-controls-container'),
+    floatingPlayBtn: document.getElementById('floating-play-btn'),
+    floatingPauseBtn: document.getElementById('floating-pause-btn'),
+    floatingNextStepBtn: document.getElementById('floating-next-step-btn'),
+    floatingResetBtn: document.getElementById('floating-reset-btn'),
+    floatingSizeSlider: document.getElementById('floating-size-slider'),
+    floatingSizeLabel: document.getElementById('floating-size-label'),
+    floatingSpeedSlider: document.getElementById('floating-speed-slider'),
+    floatingSpeedLabel: document.getElementById('floating-speed-label'),
 };
 
 export function handleRacerFinish(result, finishedRacers) {
@@ -252,6 +261,32 @@ export function showReportModal(title, data, mode, summaryText = '') {
     uiElements.benchmarkModal.style.display = 'flex';
 }
 
+function updateFloatingControlsState() {
+    const { isSorting, executionState } = state;
+    const { floatingPlayBtn, floatingPauseBtn, floatingNextStepBtn, floatingSizeSlider, floatingSpeedSlider } = uiElements;
+
+    if (!floatingPlayBtn || !floatingPauseBtn || !floatingNextStepBtn || !floatingSizeSlider || !floatingSpeedSlider) return;
+
+    const controlsToDisable = [floatingSizeSlider, floatingSpeedSlider];
+    controlsToDisable.forEach(el => el.disabled = isSorting);
+
+    floatingPlayBtn.style.display = 'none';
+    floatingPauseBtn.style.display = 'none';
+    floatingNextStepBtn.style.display = 'none';
+
+    if (!isSorting) {
+        floatingPlayBtn.style.display = 'flex';
+    } else {
+        if (executionState === 'auto') {
+            floatingPauseBtn.style.display = 'flex';
+        } else if (executionState === 'step') {
+            floatingNextStepBtn.style.display = 'flex';
+        } else if (executionState === 'paused') {
+            floatingPlayBtn.style.display = 'flex';
+        }
+    }
+}
+
 export function updateControlsState() {
     const { isSorting, executionState } = state;
     const { playBtn, pauseBtn, nextStepBtn, resetBtn, sizeSlider, speedSlider, scenarioSelect, qsVariantSelect, algoSelectionArea } = uiElements;
@@ -286,6 +321,8 @@ export function updateControlsState() {
             playBtn.disabled = false;
         }
     }
+
+    updateFloatingControlsState();
 }
 
 

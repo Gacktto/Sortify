@@ -61,6 +61,11 @@ export class Visualizer {
         this.statusBox = card.querySelector('.status-box');
         this.comparisonsEl = card.querySelector('.stats-comparisons');
         this.accessesEl = card.querySelector('.stats-accesses');
+
+        if (this.sortType !== 'heap' && this.sortType !== 'merge') {
+            this.auxContainer.remove();
+        }
+
     }
 
     setData(data) {

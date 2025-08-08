@@ -4,6 +4,80 @@ import { Visualizer } from './visualizer.js';
 import { ALGORITHMS } from './algorithms.js';
 import { ALGO_CONFIG } from './config.js';
 
+let mediaRecorder;
+let recordedChunks = [];
+let recordingInterval = null;
+
+async function startRecording() {
+    if (!state.recordExecution) return;
+
+    const elementToRecord = uiElements.visualizersArea;
+    if (!elementToRecord) return;
+
+    console.log("Iniciando gravação do elemento...");
+
+    try {
+        const canvas = document.createElement('canvas');
+        canvas.width = elementToRecord.offsetWidth;
+        canvas.height = elementToRecord.offsetHeight;
+        const ctx = canvas.getContext('2d');
+
+        const stream = canvas.captureStream(30);
+
+        recordedChunks = [];
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
+
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+                recordedChunks.push(event.data);
+            }
+        };
+
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'sortify-recording.webm';
+            document.body.appendChild(a);
+            a.click();
+            URL.revokeObjectURL(url);
+            a.remove();
+        };
+
+        mediaRecorder.start();
+
+        recordingInterval = setInterval(async () => {
+            try {
+                const canvasFrame = await html2canvas(elementToRecord, { logging: false });
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(canvasFrame, 0, 0, canvas.width, canvas.height);
+            } catch (err) {
+                console.error("Erro durante a captura do frame:", err);
+                stopRecording();
+            }
+        }, 33);
+
+    } catch (err) {
+        console.error("Erro ao configurar a gravação:", err);
+        state.recordExecution = false;
+        const toggle = document.getElementById('record-sort-toggle');
+        if(toggle) toggle.checked = false;
+    }
+}
+
+function stopRecording() {
+    if (recordingInterval) {
+        clearInterval(recordingInterval);
+        recordingInterval = null;
+    }
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+        mediaRecorder = null;
+    }
+}
+
 function switchMode(newMode) {
     if (state.isSorting) return;
     state.currentMode = newMode;
@@ -141,7 +215,7 @@ async function runSingleMode() {
 
     const result = await state.activeVisualizers[0].run(ALGORITHMS);
 
-    if (!state.stopSignal && result) {
+    if (!state.stopSignal && result && state.showReportAtEnd) {
         const summary = `Execução em modo Single View finalizada.`;
         showReportModal(`Relatório: ${result.viz.config.name}`, [result], 'single', summary);
     }
@@ -269,7 +343,16 @@ async function playAll() {
     if (!readyToStart) return;
 
     showCountdown(async () => {
+        await startRecording();
         await runFunction();
+
+        if (state.recordExecution) {
+            setTimeout(() => {
+                stopRecording();
+            }, 1000);
+        } else {
+            stopRecording();
+        }
 
         if (!state.stopSignal) {
             state.isSorting = false;
@@ -280,7 +363,8 @@ async function playAll() {
 
 function resetApp() {
     state.stopSignal = true;
-    state.isSorting = false; 
+    state.isSorting = false;
+    stopRecording();
     
     if (state.stepPromiseResolvers.length > 0) {
         state.stepPromiseResolvers.forEach(resolve => resolve(false));
@@ -294,7 +378,12 @@ function resetApp() {
         generateMasterArray();
         updateControlsState();
         uiElements.scoreboardTitle.innerText = "🏆 Placar 🏆";
-    }, state.DELAY > 0 ? state.DELAY + 50 : 50);
+    }, 50);
+}
+
+function triggerNextStep() {
+    state.stepPromiseResolvers.forEach(resolve => resolve(true));
+    state.stepPromiseResolvers = [];
 }
 
 
@@ -302,6 +391,20 @@ function initializeApp() {
     populateUI();
     applyStateFromURL(switchMode);
     resetApp();
+
+    const showReportToggle = document.getElementById('show-report-toggle');
+    if (showReportToggle) {
+        showReportToggle.addEventListener('change', (e) => {
+            state.showReportAtEnd = e.target.checked;
+        });
+    }
+
+    const recordSortToggle = document.getElementById('record-sort-toggle');
+    if (recordSortToggle) {
+        recordSortToggle.addEventListener('change', (e) => {
+            state.recordExecution = e.target.checked;
+        });
+    }
     
     function handleSettingsChange() {
         switch(state.currentMode) {
@@ -319,29 +422,14 @@ function initializeApp() {
         updateURLFromState();
     }
 
-    function showUI() {
-        uiElements.leftSidebar.classList.remove('hidden');
-        document.body.classList.remove('ui-hidden');
-        uiElements.hideUiBtn.classList.remove('hidden');
-    }
-
-    function hideUI() {
-        uiElements.leftSidebar.classList.add('hidden');
-        document.body.classList.add('ui-hidden');
-        uiElements.hideUiBtn.classList.add('hidden');
-
-        if (localStorage.getItem('showHideUiMessage') === 'false') {
-            return;
-        }
-
+    function showUIToast() {
+        if (localStorage.getItem('showHideUiMessage') === 'false') return;
+    
         const toast = document.createElement('div');
         toast.className = 'toast-notification';
         toast.innerHTML = `
             <span>Pressione <strong>'Q'</strong> para reexibir a UI.</span>
-            <label>
-                <input type="checkbox" id="dont-show-again-checkbox">
-                Não mostrar novamente
-            </label>
+            <label><input type="checkbox" id="dont-show-again-checkbox"> Não mostrar novamente</label>
         `;
         document.body.appendChild(toast);
 
@@ -353,11 +441,46 @@ function initializeApp() {
                 localStorage.removeItem('showHideUiMessage');
             }
         });
-
-        setTimeout(() => {
-            toast.remove();
-        }, 5000);
     }
+
+    function hideUI() {
+        document.body.classList.add('ui-hidden');
+        uiElements.leftSidebar.classList.add('hidden');
+        uiElements.floatingControlsContainer.classList.remove('hidden');
+        uiElements.hideUiBtn.classList.add('hidden');
+        showUIToast();
+    }
+
+    function showUI() {
+        document.body.classList.remove('ui-hidden');
+        uiElements.leftSidebar.classList.remove('hidden');
+        uiElements.floatingControlsContainer.classList.add('hidden');
+        uiElements.hideUiBtn.classList.remove('hidden');
+    }
+
+    // --- Event Listeners for Floating Controls (syncs with main controls) ---
+    uiElements.floatingPlayBtn.addEventListener('click', playAll);
+    uiElements.floatingPauseBtn.addEventListener('click', playAll);
+    uiElements.floatingNextStepBtn.addEventListener('click', triggerNextStep);
+    uiElements.floatingResetBtn.addEventListener('click', resetApp);
+
+    uiElements.floatingSizeSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        uiElements.floatingSizeLabel.innerText = value;
+        uiElements.sizeSlider.value = value;
+        uiElements.sizeLabel.innerText = value;
+        generateMasterArray();
+        updateLiveConfig();
+    });
+
+    uiElements.floatingSpeedSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        uiElements.floatingSpeedLabel.innerText = value;
+        uiElements.speedSlider.value = value;
+        uiElements.speedLabel.innerText = value;
+        state.delay.simple = 101 - parseInt(value, 10);
+        updateLiveConfig();
+    });
 
     document.getElementById('compare-delay-slider').addEventListener('input', (e) => {
         document.getElementById('compare-delay-label').innerText = e.target.value;
@@ -378,11 +501,17 @@ function initializeApp() {
     uiElements.speedSlider.addEventListener('input', (e) => {
         uiElements.speedLabel.innerText = e.target.value;
         state.delay.simple = 101 - parseInt(e.target.value, 10);
+        // Sync with floating slider
+        uiElements.floatingSpeedSlider.value = e.target.value;
+        uiElements.floatingSpeedLabel.innerText = e.target.value;
         updateLiveConfig();
     });
 
     uiElements.sizeSlider.addEventListener('input', (e) => {
         uiElements.sizeLabel.innerText = e.target.value;
+        // Sync with floating slider
+        uiElements.floatingSizeSlider.value = e.target.value;
+        uiElements.floatingSizeLabel.innerText = e.target.value;
         generateMasterArray();
         updateLiveConfig();
     });
@@ -479,10 +608,7 @@ function initializeApp() {
 
         updateControlsState();
     });
-    uiElements.nextStepBtn.addEventListener('click', () => {
-        state.stepPromiseResolvers.forEach(resolve => resolve(true));
-        state.stepPromiseResolvers = [];
-    });
+    uiElements.nextStepBtn.addEventListener('click', triggerNextStep);
 
     uiElements.hideUiBtn.addEventListener('click', hideUI);
     window.addEventListener('keydown', (event) => {

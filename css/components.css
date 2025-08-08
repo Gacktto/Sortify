@@ -1,5 +1,3 @@
-/* css/components.css */
-
 #scoreboard-list {
   list-style-type: none;
   padding: 0;
@@ -352,4 +350,109 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+#floating-controls-container {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1002;
+}
+
+#floating-controls-container.hidden {
+  display: none;
+}
+
+.floating-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 0.3s ease 0.5s, transform 0.3s ease 0.5s;
+}
+
+#floating-controls-container:hover .floating-panel {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+.floating-controls-grid {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.floating-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.floating-button {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-headline);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.floating-button:hover {
+  background-color: var(--primary-main);
+}
+
+.floating-button svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--text-headline);
+  fill: var(--text-headline);
+}
+
+#floating-play-btn svg {
+  fill: var(--text-headline);
+  stroke: none;
+}
+
+#floating-pause-btn svg {
+  fill: var(--text-headline);
+  stroke: none;
+}
+
+#floating-next-step-btn svg {
+  fill: var(--text-headline);
+  stroke: none;
+}
+
+#floating-reset-btn svg {
+  fill: none;
+}
+
+.floating-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+}
+
+.floating-control-group label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.floating-control-group input[type="range"] {
+  margin: 0;
+  height: 3px;
 }

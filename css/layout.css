@@ -1,4 +1,3 @@
-/* css/layout.css */
 body {
   display: grid;
   grid-template-columns: auto 1fr auto;
