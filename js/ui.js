@@ -37,6 +37,7 @@ export const uiElements = {
     floatingSizeLabel: document.getElementById('floating-size-label'),
     floatingSpeedSlider: document.getElementById('floating-speed-slider'),
     floatingSpeedLabel: document.getElementById('floating-speed-label'),
+    codeViewerContainer: document.getElementById('code-viewer-container'),
 };
 
 export function handleRacerFinish(result, finishedRacers) {

@@ -3,6 +3,7 @@ import { uiElements, populateUI, updateControlsState, applyStateFromURL, resetVi
 import { Visualizer } from './visualizer.js';
 import { ALGORITHMS } from './algorithms.js';
 import { ALGO_CONFIG } from './config.js';
+import { CODE_SNIPPETS } from './code-snippets.js';
 
 let mediaRecorder;
 let recordedChunks = [];
@@ -92,6 +93,11 @@ function switchMode(newMode) {
     racePanel.style.display = (newMode === 'single' || newMode === 'race') ? 'block' : 'none';
     benchmarkPanel.style.display = newMode === 'benchmark' ? 'block' : 'none';
 
+    if (newMode !== 'single') {
+        uiElements.codeViewerContainer.classList.add('hidden');
+        uiElements.visualizersArea.classList.remove('code-visible');
+    }
+
     resetApp();
 }
 
@@ -145,8 +151,14 @@ function createVisualizers(algoTypes) {
 
     if (state.activeVisualizers.length === 1) {
         uiElements.visualizersArea.classList.add('single-view-mode');
+        const codeViewer = uiElements.codeViewerContainer.querySelector('code');
+        codeViewer.textContent = CODE_SNIPPETS[algoTypes[0]];
+        Prism.highlightElement(codeViewer);
+        adjustCodeFontSize();
     } else {
         uiElements.visualizersArea.classList.remove('single-view-mode');
+        uiElements.codeViewerContainer.classList.add('hidden');
+        uiElements.visualizersArea.classList.remove('code-visible');
     }
 
     toggleLegendsVisibility();
@@ -383,6 +395,9 @@ function resetApp() {
         state.stepPromiseResolvers = [];
     }
 
+    uiElements.codeViewerContainer.classList.add('hidden');
+    uiElements.visualizersArea.classList.remove('code-visible');
+
     setTimeout(() => {
         state.stopSignal = false;
         resetVisuals();
@@ -396,6 +411,25 @@ function resetApp() {
 function triggerNextStep() {
     state.stepPromiseResolvers.forEach(resolve => resolve(true));
     state.stepPromiseResolvers = [];
+}
+
+function adjustCodeFontSize() {
+    const codeContainer = uiElements.codeViewerContainer;
+    const codeElement = codeContainer.querySelector('code');
+    if (!codeElement || !codeElement.textContent) return;
+
+    let fontSize = 16;
+    codeElement.style.fontSize = `${fontSize}px`;
+
+    while (codeElement.scrollWidth > codeContainer.clientWidth && fontSize > 8) {
+        fontSize -= 0.5;
+        codeElement.style.fontSize = `${fontSize}px`;
+    }
+
+    while (codeElement.scrollHeight > codeContainer.clientHeight && fontSize > 8) {
+        fontSize -= 0.5;
+        codeElement.style.fontSize = `${fontSize}px`;
+    }
 }
 
 
@@ -638,6 +672,8 @@ function initializeApp() {
             uiElements.benchmarkModal.style.display = 'none';
         }
     });
+
+    window.addEventListener('resize', adjustCodeFontSize);
     
 }
 

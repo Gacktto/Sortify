@@ -41,6 +41,37 @@
   font-weight: 600;
 }
 
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.toggle-code-btn {
+    background: none;
+    border: 1px solid var(--text-muted);
+    color: var(--text-muted);
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.code-container {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.code-container.hidden {
+    display: none;
+}
+
+.code-container.hidden {
+    display: none;
+}
+
 .bars-container {
   display: flex;
   align-items: flex-end;
@@ -254,7 +285,8 @@
   font-family: 'Roboto Mono', monospace; font-size: 13px; font-weight: bold; 
   border: 2px solid var(--surface-color); 
   z-index: 2; 
-  transition: all 0.3s ease; }
+  transition: all 0.3s ease; 
+}
 
 .heap-node.highlight-compare { 
   background-color: var(--comparison-color); 

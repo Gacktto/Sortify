@@ -27,11 +27,26 @@ body.ui-hidden {
 
 #main-content {
   display: flex;
-  flex-direction: column;
   height: 100%;
   background-color: var(--surface-color);
   border-radius: 16px;
   overflow: hidden;
+}
+
+#visualizers-area.code-visible {
+  width: 60%;
+}
+
+#code-viewer-container {
+  width: 40%;
+  padding: 25px;
+  background-color: var(--bg-color-dark);
+  overflow-y: auto;
+  transition: width 0.3s ease;
+}
+
+#code-viewer-container.hidden {
+  display: none;
 }
 
 #right-sidebar.initial-hidden {

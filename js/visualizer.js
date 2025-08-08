@@ -1,5 +1,7 @@
 import { ALGO_CONFIG } from './config.js';
 import state from './state.js';
+import { CODE_SNIPPETS } from './code-snippets.js';
+import { uiElements } from './ui.js';
 
 export class Visualizer {
     constructor(sortType, visualizersArea) {
@@ -19,7 +21,10 @@ export class Visualizer {
         card.id = `viz-${sortType}`;
 
         card.innerHTML = `
-            <h3>${this.config.name}</h3>
+            <div class="card-header">
+                <h3>${this.config.name}</h3>
+                <button class="toggle-code-btn">Ver Código</button>
+            </div>
             <div class="bars-container"></div>
 
             <div class="aux-visualizer-container"></div>
@@ -79,9 +84,30 @@ export class Visualizer {
             this.auxContainer.remove();
         }
 
+        this.cardElement.querySelector('.toggle-code-btn').addEventListener('click', () => {
+            uiElements.codeViewerContainer.classList.toggle('hidden');
+            uiElements.visualizersArea.classList.toggle('code-visible');
+        });
+    }
+
+    highlightLine(lineNumber) {
+        const code = uiElements.codeViewerContainer.querySelector('code');
+        
+        const highlighted = code.querySelector('.line-highlight');
+        if (highlighted) {
+            highlighted.replaceWith(...highlighted.childNodes);
+        }
+
+        const lines = code.innerHTML.split('\n');
+        const line = lines[lineNumber - 1];
+        if (line) {
+            lines[lineNumber - 1] = `<span class="line-highlight">${line}</span>`;
+            code.innerHTML = lines.join('\n');
+        }
     }
 
     updateMemoryUsage(auxiliarySize) {
+
         this.auxiliaryMemory = auxiliarySize;
         const totalMemory = this.array.length + this.auxiliaryMemory;
         const percentage = totalMemory > 0 ? (this.auxiliaryMemory / totalMemory) * 100 : 0;
