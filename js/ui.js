@@ -360,6 +360,18 @@ export function populateUI() {
         <button class="preset-btn" id="preset-all">Todos</button>
         <button class="preset-btn" id="preset-clear">Limpar</button>
     </div>`;
+
+    const userPresetsHTML = `
+    <div class="control-group" id="user-presets-container">
+        <label for="user-presets-select">Presets Salvos:</label>
+        <div class="select-wrapper">
+            <select id="user-presets-select">
+                <option value="">Carregar preset...</option>
+            </select>
+        </div>
+        <button id="save-preset-btn" class="control-button">Salvar</button>
+        <button id="delete-preset-btn" class="control-button danger-button">Excluir</button>
+    </div>`;
     
     const racePanelHTML = `
     <div id="race-mode-panel">
@@ -368,6 +380,7 @@ export function populateUI() {
         <div id="race-algo-toggles" style="display: flex; flex-wrap: wrap; gap: 5px;">
             ${Object.keys(ALGO_CONFIG).map(key => `<div class="algo-toggle"><input type="checkbox" id="cb-${key}" value="${key}"><label for="cb-${key}">${ALGO_CONFIG[key].name}</label></div>`).join('')}
         </div>
+        ${userPresetsHTML}
     </div>`;
 
     const benchmarkPanelHTML = `
@@ -389,7 +402,39 @@ export function populateUI() {
 
     uiElements.algoSelectionArea.innerHTML = racePanelHTML + benchmarkPanelHTML;
     updateChallengerAddSelect();
+    populatePresetList();
 }
+
+export function populatePresetList() {
+    const presets = getSavedPresets();
+    const select = document.getElementById('user-presets-select');
+    select.innerHTML = '<option value="">Carregar preset...</option>';
+    for (const presetName in presets) {
+        const option = document.createElement('option');
+        option.value = presetName;
+        option.textContent = presetName;
+        select.appendChild(option);
+    }
+}
+
+export function getSavedPresets() {
+    return JSON.parse(localStorage.getItem('sortify_presets')) || {};
+}
+
+export function savePreset(name, queryString) {
+    const presets = getSavedPresets();
+    presets[name] = queryString;
+    localStorage.setItem('sortify_presets', JSON.stringify(presets));
+    populatePresetList();
+}
+
+export function deletePreset(name) {
+    const presets = getSavedPresets();
+    delete presets[name];
+    localStorage.setItem('sortify_presets', JSON.stringify(presets));
+    populatePresetList();
+}
+
 
 export function updateChallengerAddSelect() {
     const anchor = uiElements.algoSelectionArea.querySelector('#benchmark-anchor-select').value;
@@ -420,8 +465,12 @@ export function updateURLFromState() {
     const params = new URLSearchParams();
     params.set('mode', state.currentMode);
     params.set('size', uiElements.sizeSlider.value);
-    params.set('speed', uiElements.speedSlider.value);
     params.set('scenario', uiElements.scenarioSelect.value);
+
+    params.set('delayMode', state.delay.mode);
+    params.set('speed', uiElements.speedSlider.value);
+    params.set('compareDelay', document.getElementById('compare-delay-slider').value);
+    params.set('swapDelay', document.getElementById('swap-delay-slider').value);
 
     if (state.currentMode === 'race' || state.currentMode === 'single') {
         const algos = Array.from(uiElements.algoSelectionArea.querySelectorAll('#race-algo-toggles input:checked')).map(cb => cb.value);
@@ -438,11 +487,37 @@ export function updateURLFromState() {
 
 export function applyStateFromURL(switchModeCallback) {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('size')) uiElements.sizeSlider.value = params.get('size');
-    uiElements.sizeLabel.innerText = uiElements.sizeSlider.value;
-    if (params.get('speed')) uiElements.speedSlider.value = params.get('speed');
-    uiElements.speedLabel.innerText = uiElements.speedSlider.value;
-    state.delay.simple = 101 - parseInt(uiElements.speedSlider.value, 10);
+
+    const delayMode = params.get('delayMode') || 'simple';
+    document.getElementById('delay-mode-select').value = delayMode;
+    state.delay.mode = delayMode;
+    document.getElementById('simple-delay-panel').style.display = delayMode === 'simple' ? 'block' : 'none';
+    document.getElementById('advanced-delay-panel').style.display = delayMode === 'advanced' ? 'block' : 'none';
+
+    if (params.get('speed')) {
+        uiElements.speedSlider.value = params.get('speed');
+        uiElements.speedLabel.innerText = uiElements.speedSlider.value;
+        state.delay.simple = 101 - parseInt(uiElements.speedSlider.value, 10);
+    }
+
+    if (params.get('compareDelay')) {
+        const compareDelay = params.get('compareDelay');
+        document.getElementById('compare-delay-slider').value = compareDelay;
+        document.getElementById('compare-delay-label').innerText = compareDelay;
+        state.delay.compare = parseInt(compareDelay, 10);
+    }
+
+    if (params.get('swapDelay')) {
+        const swapDelay = params.get('swapDelay');
+        document.getElementById('swap-delay-slider').value = swapDelay;
+        document.getElementById('swap-delay-label').innerText = swapDelay;
+        state.delay.swap = parseInt(swapDelay, 10);
+    }
+
+    if (params.get('size')) {
+        uiElements.sizeSlider.value = params.get('size');
+        uiElements.sizeLabel.innerText = uiElements.sizeSlider.value;
+    }
     
     if (params.get('scenario')) uiElements.scenarioSelect.value = params.get('scenario');
     if (params.get('pivot')) uiElements.qsVariantSelect.value = params.get('pivot');

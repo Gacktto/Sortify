@@ -1,5 +1,30 @@
 import state from './state.js';
-import { uiElements, populateUI, updateControlsState, applyStateFromURL, resetVisuals, handleRacerFinish, toggleQsVariantSelector, renderChallengersList, updateChallengerAddSelect, updateBenchmarkScoreboard, showReportModal, updateURLFromState, displayPreRaceScreen, displayPreBenchmarkScreen, displayPreSingleViewScreen, showCountdown, updateLiveConfig, updateLiveBenchmarkView, updateLiveCompetitorList, updateLiveSingleView } from './ui.js';
+import { 
+    uiElements, 
+    populateUI, 
+    updateControlsState, 
+    applyStateFromURL, 
+    resetVisuals, 
+    handleRacerFinish, 
+    toggleQsVariantSelector, 
+    renderChallengersList, 
+    updateChallengerAddSelect, 
+    updateBenchmarkScoreboard, 
+    showReportModal, 
+    updateURLFromState, 
+    displayPreRaceScreen, 
+    displayPreBenchmarkScreen, 
+    displayPreSingleViewScreen, 
+    showCountdown, 
+    updateLiveConfig, 
+    updateLiveBenchmarkView, 
+    updateLiveCompetitorList, 
+    updateLiveSingleView,
+    getSavedPresets,
+    savePreset,
+    deletePreset,
+    populatePresetList
+} from './ui.js';
 import { Visualizer } from './visualizer.js';
 import { ALGORITHMS } from './algorithms.js';
 import { ALGO_CONFIG } from './config.js';
@@ -623,6 +648,45 @@ function initializeApp() {
             allCheckboxes.forEach(checkbox => { checkbox.checked = algosToSelect.includes(checkbox.value); });
             toggleQsVariantSelector();
             handleSettingsChange();
+        });
+    }
+
+    const userPresetsContainer = document.getElementById('user-presets-container');
+    if (userPresetsContainer) {
+        const select = document.getElementById('user-presets-select');
+
+        document.getElementById('save-preset-btn').addEventListener('click', () => {
+            const name = prompt("Digite um nome para o seu preset:");
+            if (name) {
+                updateURLFromState();
+                const queryString = window.location.search;
+                savePreset(name, queryString);
+                select.value = name;
+            }
+        });
+
+        document.getElementById('delete-preset-btn').addEventListener('click', () => {
+            const selectedName = select.value;
+            if (selectedName && confirm(`Tem certeza que deseja excluir o preset "${selectedName}"?`)) {
+                deletePreset(selectedName);
+            }
+        });
+
+        select.addEventListener('change', () => {
+            const selectedName = select.value;
+            if (selectedName) {
+                const presets = getSavedPresets();
+                const queryString = presets[selectedName];
+                if (queryString) {
+                    history.pushState(null, '', queryString);
+                    applyStateFromURL(switchMode);
+                    uiElements.sizeSlider.dispatchEvent(new Event('input'));
+                    uiElements.speedSlider.dispatchEvent(new Event('input'));
+                    document.getElementById('compare-delay-slider').dispatchEvent(new Event('input'));
+                    document.getElementById('swap-delay-slider').dispatchEvent(new Event('input'));
+                    handleSettingsChange();
+                }
+            }
         });
     }
 
