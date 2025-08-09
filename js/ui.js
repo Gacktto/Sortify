@@ -155,9 +155,54 @@ function createOrUpdateChart(canvasId, chartVar, label, labels, data, colors, te
     });
 }
 
+let lastReportData = null;
+
+export function getLastReportData() {
+    return lastReportData;
+}
+
+export function exportToCSV(headers, data, fileName) {
+    const csvContent = [
+        headers.join(','),
+        ...data.map(row => headers.map(header => `"${row[header]}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+export function exportToJSON(data, fileName) {
+    const jsonContent = JSON.stringify(data, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 export function showReportModal(title, data, mode, summaryText = '') {
+    lastReportData = data;
+
     uiElements.benchmarkSummaryTitle.innerText = title;
     uiElements.benchmarkSummaryStats.innerHTML = `<p>${summaryText}</p>`;
+
+    const exportMenu = document.getElementById('export-menu-container');
+    if (mode === 'benchmark') {
+        exportMenu.style.display = 'block';
+    } else {
+        exportMenu.style.display = 'none';
+    }
     
     let tableHTML = '';
     const chartLabels = [];

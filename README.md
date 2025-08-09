@@ -85,7 +85,7 @@ While the current version is fully functional, here are some potential features 
 * [x] **Live Code Highlighting:** Display a pseudo-code or actual code snippet for the running algorithm, highlighting the line of code that corresponds to the current operation (e.g., a comparison or swap).
 * [x] **Memory Usage Visualization:** Add a visual indicator to show the auxiliary memory being used by non-in-place algorithms like Merge Sort.
 * [x] **Save/Load Presets:** Allow users to save their favorite configurations (algorithm selections, data size, scenario) and load them later.
-* [ ] **Export Results:** Add functionality to export the data from benchmark reports as a CSV or JSON file for further analysis.
+* [x] **Export Results:** Add functionality to export the data from benchmark reports as a CSV or JSON file for further analysis.
 
 ## License
 

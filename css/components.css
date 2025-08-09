@@ -456,3 +456,77 @@
   margin: 0;
   height: 3px;
 }
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+}
+
+.modal-action-btn:hover {
+  color: var(--text-main);
+}
+
+.export-menu {
+  position: relative;
+}
+
+.export-options-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 0.5rem 0;
+  min-width: 200px;
+  z-index: 10;
+  backdrop-filter: blur(50px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.export-options-dropdown a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: var(--text-main);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.export-options-dropdown a:hover {
+  color: white;
+}
+
+.export-menu.active .export-options-dropdown {
+  display: block;
+}
+
+.visualizer-card .toggle-code-btn {
+    display: none;
+}
+
+#visualizers-area.single-view-active .visualizer-card .toggle-code-btn {
+    display: block;
+}

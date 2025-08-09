@@ -119,8 +119,23 @@
 
   <div id="benchmark-modal" class="modal-overlay">
     <div class="modal-content">
-      <button id="benchmark-modal-close" class="modal-close-btn">&times;</button>
-      <h2 id="benchmark-summary-title">Relatório do Benchmark</h2>
+        <div class="modal-header">
+            <h2 id="benchmark-summary-title">Relatório do Benchmark</h2>
+            <div class="modal-actions">
+                <div id="export-menu-container" class="export-menu" style="display: none;">
+                    <button id="export-download-btn" class="modal-action-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </button>
+                    <div id="export-options" class="export-options-dropdown">
+                        <a href="#" id="export-summary-csv">Resumo (CSV)</a>
+                        <a href="#" id="export-summary-json">Resumo (JSON)</a>
+                        <a href="#" id="export-log-csv">Log Detalhado (CSV)</a>
+                        <a href="#" id="export-log-json">Log Detalhado (JSON)</a>
+                    </div>
+                </div>
+                <button id="benchmark-modal-close" class="modal-action-btn">&times;</button>
+            </div>
+        </div>
       <div id="benchmark-summary-stats"></div>
       <div class="charts-container">
         <div><h3>Tempo Médio (s)</h3><canvas id="timeChart"></canvas></div>

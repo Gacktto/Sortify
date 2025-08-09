@@ -91,18 +91,16 @@ export class Visualizer {
     }
 
     highlightLine(lineNumber) {
-        const code = uiElements.codeViewerContainer.querySelector('code');
-        
-        const highlighted = code.querySelector('.line-highlight');
-        if (highlighted) {
-            highlighted.replaceWith(...highlighted.childNodes);
-        }
+        const codeContainer = uiElements.codeViewerContainer;
+        const preElement = codeContainer.querySelector('pre');
 
-        const lines = code.innerHTML.split('\n');
-        const line = lines[lineNumber - 1];
-        if (line) {
-            lines[lineNumber - 1] = `<span class="line-highlight">${line}</span>`;
-            code.innerHTML = lines.join('\n');
+        preElement.querySelectorAll('.line-highlight').forEach(el => {
+            el.classList.remove('line-highlight');
+        });
+
+        const lineElement = preElement.querySelector(`.token.line:nth-child(${lineNumber})`);
+        if (lineElement) {
+            lineElement.classList.add('line-highlight');
         }
     }
 

@@ -23,7 +23,10 @@ import {
     getSavedPresets,
     savePreset,
     deletePreset,
-    populatePresetList
+    populatePresetList,
+    getLastReportData,
+    exportToCSV,
+    exportToJSON
 } from './ui.js';
 import { Visualizer } from './visualizer.js';
 import { ALGORITHMS } from './algorithms.js';
@@ -112,6 +115,8 @@ function switchMode(newMode) {
     uiElements.modeSwitcherContainer.querySelector('#mode-race-btn').classList.toggle('active', newMode === 'race');
     uiElements.modeSwitcherContainer.querySelector('#mode-benchmark-btn').classList.toggle('active', newMode === 'benchmark');
     
+    uiElements.visualizersArea.classList.toggle('single-view-active', newMode === 'single');
+
     const racePanel = uiElements.algoSelectionArea.querySelector('#race-mode-panel');
     const benchmarkPanel = uiElements.algoSelectionArea.querySelector('#benchmark-mode-panel');
     
@@ -731,7 +736,85 @@ function initializeApp() {
         uiElements.benchmarkModal.style.display = 'none';
     });
 
+    const exportMenuContainer = document.getElementById('export-menu-container');
+    const exportDownloadBtn = document.getElementById('export-download-btn');
+    const exportOptions = document.getElementById('export-options');
+
+    exportDownloadBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportMenuContainer.classList.toggle('active');
+    });
+
+    exportOptions.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = e.target.id;
+        const data = getLastReportData();
+        if (!data) return;
+
+        if (targetId === 'export-summary-csv' || targetId === 'export-summary-json') {
+            const aggregatedStats = {};
+            data.forEach(round => {
+                round.results.forEach(res => {
+                    if (!aggregatedStats[res.type]) {
+                        aggregatedStats[res.type] = {
+                            name: res.viz.config.name,
+                            runs: 0,
+                            time: 0,
+                            comparisons: 0,
+                            accesses: 0,
+                        };
+                    }
+                    const stats = aggregatedStats[res.type];
+                    stats.runs++;
+                    stats.time += res.time;
+                    stats.comparisons += res.comparisons;
+                    stats.accesses += res.accesses;
+                });
+            });
+
+            const summaryData = Object.values(aggregatedStats).map(stats => ({
+                algoritmo: stats.name,
+                tempo_medio_s: (stats.time / stats.runs).toFixed(4),
+                comparacoes_medias: Math.round(stats.comparisons / stats.runs),
+                acessos_medios: Math.round(stats.accesses / stats.runs)
+            }));
+
+            if (targetId === 'export-summary-csv') {
+                const headers = ['algoritmo', 'tempo_medio_s', 'comparacoes_medias', 'acessos_medios'];
+                exportToCSV(headers, summaryData, 'sortify_summary.csv');
+            } else {
+                exportToJSON(summaryData, 'sortify_summary.json');
+            }
+        }
+
+        if (targetId === 'export-log-csv' || targetId === 'export-log-json') {
+            const logData = [];
+            data.forEach(round => {
+                round.results.forEach(res => {
+                    logData.push({
+                        rodada: round.round,
+                        algoritmo: res.viz.config.name,
+                        tempo_s: res.time.toFixed(4),
+                        comparacoes: res.comparisons,
+                        acessos: res.accesses
+                    });
+                });
+            });
+
+            if (targetId === 'export-log-csv') {
+                const headers = ['rodada', 'algoritmo', 'tempo_s', 'comparacoes', 'acessos'];
+                exportToCSV(headers, logData, 'sortify_log.csv');
+            } else {
+                exportToJSON(logData, 'sortify_log.json');
+            }
+        }
+        exportMenuContainer.classList.remove('active');
+    });
+
     window.addEventListener('click', (e) => {
+        if (!exportMenuContainer.contains(e.target)) {
+            exportMenuContainer.classList.remove('active');
+        }
         if (e.target === uiElements.benchmarkModal) {
             uiElements.benchmarkModal.style.display = 'none';
         }
